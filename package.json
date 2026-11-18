@@ -1,0 +1,17 @@
+{
+  "name": "authorc",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Automatic OpenAlex author citation rankings on publisher article pages.",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "check": "node --check src/content.js && node --check src/background.js && node --check src/detection.js && node --check src/openalex.js && node --check options.js",
+    "package": "node scripts/package.mjs",
+    "store:screenshots": "node scripts/capture-screenshots.mjs",
+    "publish:github": "node scripts/publish-github.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

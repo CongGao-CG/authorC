@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>authorC settings</title>
+    <link rel="stylesheet" href="options.css">
+    <script src="options.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <span class="wordmark">author<span>C</span></span>
+        <p class="eyebrow">Settings</p>
+        <h1>A closer look at the authors.</h1>
+        <p class="intro">Career citation counts from OpenAlex, alongside the article you’re reading.</p>
+      </header>
+
+      <section aria-labelledby="automatic-heading" class="consent">
+        <h2 id="automatic-heading">Automatic article lookups</h2>
+        <p>When enabled, authorC reads article identifiers, author names, publication year, and the current page URL locally. It sends the article’s DOI or title and OpenAlex IDs to OpenAlex to fetch citation rankings.</p>
+        <p>OpenAlex also receives your IP address and any API key you choose to save. Full articles, cookies, and your browsing-history database are not sent. authorC has no analytics.</p>
+        <p>Enable once to show the panel automatically on supported article pages. You can pause at any time. <a href="privacy.html">Privacy policy</a></p>
+        <p id="lookup-state" class="lookup-state" role="status">Checking lookup settings…</p>
+        <button id="enable-lookups" type="button" disabled>Agree and enable automatic lookups</button>
+        <button id="pause-lookups" class="secondary" type="button" hidden disabled>Pause automatic lookups</button>
+      </section>
+
+      <section aria-labelledby="key-heading">
+        <h2 id="key-heading">OpenAlex API key <span class="optional">Optional</span></h2>
+        <p>authorC can make basic lookups without a key. Add your own key if you need a higher request allowance.</p>
+        <p><a href="https://openalex.org/settings/api" target="_blank" rel="noopener noreferrer">Get a key from OpenAlex ↗</a></p>
+        <form id="settings-form">
+          <label for="api-key">API key</label>
+          <input id="api-key" name="api-key" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="512" aria-describedby="key-help" disabled>
+          <p id="key-help" class="hint">Stored only in this browser’s extension storage and sent only to OpenAlex. Leave blank and save to remove it.</p>
+          <button id="save-button" type="submit" disabled>Save settings</button>
+        </form>
+      </section>
+
+      <section aria-labelledby="cache-heading">
+        <h2 id="cache-heading">Saved results</h2>
+        <p>Article results are cached locally for up to 24 hours to reduce repeat requests. Clear them to fetch fresh counts the next time an article is checked.</p>
+        <button id="clear-cache" class="secondary" type="button" disabled>Clear cached results</button>
+      </section>
+
+      <p id="status" class="status" role="status" aria-live="polite" aria-atomic="true">Loading settings…</p>
+      <footer>Counts reflect publications indexed by OpenAlex. Author C means the highest career citation total among the available authors.</footer>
+    </main>
+  </body>
+</html>

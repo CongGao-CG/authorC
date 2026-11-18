@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>authorC — Privacy policy</title>
+  <meta name="description" content="How authorC handles article metadata, OpenAlex requests, optional API keys, and local settings.">
+  <link rel="stylesheet" href="privacy.css">
+</head>
+<body>
+  <main>
+    <div class="wordmark">author<span>C</span></div>
+    <h1>Privacy policy</h1>
+    <p class="muted">Publisher: Cong Gao · Last updated: November 18, 2026</p>
+    <p>authorC identifies research articles and displays their authors’ total career citation counts from OpenAlex. This policy describes the Chrome extension. Questions: <a href="mailto:cnggao@gmail.com">cnggao@gmail.com</a>.</p>
+
+    <h2>Before automatic lookups start</h2>
+    <p>You enable automatic lookups in authorC’s settings after seeing a description of its data use. After you enable it, authorC checks article metadata on ordinary web pages and looks up matching articles automatically. You can pause this behavior in settings.</p>
+
+    <h2>Information handled</h2>
+    <dl>
+      <dt>Article information on the current page</dt>
+      <dd>authorC reads article metadata, including a DOI, title, author names, publication year, and the current or canonical page URL. These are used locally to identify the article. The extension does not read your Chrome history database or collect the full article text, cookies, messages, or unrelated form contents.</dd>
+      <dt>Requests to OpenAlex</dt>
+      <dd>authorC sends the article’s DOI, or its title when a DOI is unavailable, to <code>api.openalex.org</code>. It then sends relevant OpenAlex work and author IDs to retrieve citation counts. Article author names and publication year used to check a title match stay local. Full publisher page URLs are not sent by the API client. OpenAlex receives your network IP address and normal request metadata; the requested DOI or title can identify the article you are viewing.</dd>
+      <dt>Optional API key</dt>
+      <dd>If you enter an OpenAlex API key, authorC stores it in this browser’s local extension storage and sends it only to OpenAlex for authentication. OpenAlex may associate those requests with your key or account. The publisher page and on-page panel do not receive the key. No API key is bundled with the extension.</dd>
+      <dt>Local settings and results</dt>
+      <dd>authorC stores your automatic-lookup preference, optional API key, and a limited cache of article and author results. Cached records contain bibliographic identifiers, titles, names, citation totals, and retrieval times. They are not a complete browsing history. These settings and results are not stored in Chrome Sync.</dd>
+    </dl>
+
+    <h2>Use and sharing</h2>
+    <p>Information is used to match articles, retrieve and display author rankings, and reduce repeat requests. The extension contacts OpenAlex directly; authorC has no publisher-operated backend or analytics service. Cong Gao does not receive a copy of the extension’s article requests, API keys, or local cache.</p>
+    <p>authorC does not sell user data, use it for advertising, or use it for purposes unrelated to the extension’s article and citation features. Its use and transfer of user data follow the <a href="https://developer.chrome.com/docs/webstore/program-policies/user-data-faq">Chrome Web Store User Data Policy</a>, including the Limited Use requirements.</p>
+    <p>OpenAlex processes requests under its own <a href="https://openalex.org/OpenAlex_privacy_policy.pdf">privacy policy</a>. Opening an OpenAlex work or author link is a separate visit to that website. Its own cookies and policies may apply to that visit.</p>
+
+    <h2>Storage, deletion, and controls</h2>
+    <p>Complete cached results may be reused for up to 24 hours. Old entries are pruned when new results are saved, with a limit on cache size; expiration does not guarantee deletion at exactly 24 hours. <strong>Clear cached results</strong> removes saved article results immediately. Incomplete rankings are not cached.</p>
+    <p><strong>Pause automatic lookups</strong> stops article detection and requests, cancels in-progress lookups where possible, and clears cached article results. Requests already received by OpenAlex cannot be recalled. Pausing keeps your optional API key. To remove that key, clear its field and save. Uninstalling the extension removes its Chrome extension storage.</p>
+    <p>API requests use HTTPS and omit browser cookies and referrer information. Chrome restricts the extension’s local storage to trusted extension contexts. authorC does not provide an additional encryption layer for locally saved settings or results. Protect access to your browser profile and device. Rotate or revoke an OpenAlex key in your OpenAlex account when needed.</p>
+
+    <h2>Support and this policy page</h2>
+    <p>If you email support, your email provider and the publisher’s email provider handle that message. Share only information needed to resolve the issue; do not send API keys. Support correspondence is used to respond to your request.</p>
+    <p>If you read this page on GitHub Pages, GitHub processes site requests under the <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub privacy statement</a>. The page contains no analytics, third-party scripts, or embedded tracking resources.</p>
+    <p>Material changes to the extension’s data practices will be disclosed in the extension before the changed practices begin. The date above identifies the latest policy revision.</p>
+    <footer>Cong Gao · <a href="mailto:cnggao@gmail.com">cnggao@gmail.com</a></footer>
+  </main>
+</body>
+</html>

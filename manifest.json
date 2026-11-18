@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "authorC",
+  "version": "0.2.0",
+  "description": "Find a paper in OpenAlex and highlight its most-cited author by total career citations.",
+  "minimum_chrome_version": "111",
+  "icons": {
+    "16": "assets/icon-16.png",
+    "32": "assets/icon-32.png",
+    "48": "assets/icon-48.png",
+    "128": "assets/icon-128.png"
+  },
+  "permissions": ["storage"],
+  "host_permissions": ["https://api.openalex.org/*"],
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*/*", "http://*/*"],
+      "exclude_matches": ["https://openalex.org/*", "https://*.openalex.org/*"],
+      "js": ["src/detection.js", "src/content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "Show authorC",
+    "default_icon": {
+      "16": "assets/icon-16.png",
+      "32": "assets/icon-32.png",
+      "48": "assets/icon-48.png",
+      "128": "assets/icon-128.png"
+    }
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  }
+}
