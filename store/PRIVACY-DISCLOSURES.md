@@ -59,4 +59,6 @@ The current code has no data sale, advertising, profiling, creditworthiness, or 
 
 ## Privacy policy URL
 
-**PENDING — public hosting.** The finalized local policy is [privacy.html](../privacy.html). `npm run package` copies it into `docs/` for GitHub Pages. The public `authorC` repository on branch `main` is authorized; it has not been created or verified remotely from this environment. Run `npm run publish:github` in a normal terminal, then verify the public privacy URL before entering it in the dashboard. A planned Pages address is not proof that the policy is public. [Privacy policy field](https://developer.chrome.com/docs/webstore/cws-dashboard-privacy#set-a-privacy-policy).
+Use https://conggao-cg.github.io/authorC/privacy.html. The public repository has been created and GitHub Pages configured. Before entering this URL in the dashboard, confirm that it opens without signing in and displays the current policy; public access could not be verified from this environment.
+
+The local policy is [privacy.html](../privacy.html). `npm run package` copies it into `docs/` for GitHub Pages. [Privacy policy field](https://developer.chrome.com/docs/webstore/cws-dashboard-privacy#set-a-privacy-policy).
