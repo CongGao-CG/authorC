@@ -48,8 +48,8 @@ authorC is an independent extension and is not affiliated with OpenAlex or any a
 | Category | Choose **Workflow & Planning** for the reading workflow, or **Tools** for a general research utility. These are suggestions, not a submitted choice. |
 | Publisher display name | Cong Gao |
 | Contact email | cnggao@gmail.com — verification in the developer dashboard remains to be completed. |
-| Privacy policy URL | **PENDING — planned GitHub Pages privacy page; use only after the public URL is verified.** |
-| Homepage/support URL | A public GitHub repository named `authorC`, branch `main`, and GitHub Pages are authorized. Remote creation is pending; use the verified URL returned by `npm run publish:github`. |
+| Privacy policy URL | https://conggao-cg.github.io/authorC/privacy.html — verify public access before submission. |
+| Homepage/support URL | https://github.com/CongGao-CG/authorC |
 | Pricing | Current build has no paid authorC features. Set the dashboard’s pricing field consistently. |
 
 The current category names and their meanings are documented in [Chrome’s category guidance](https://developer.chrome.com/docs/webstore/best-practices#choose-your-extensions-category-well). The [listing guide](https://developer.chrome.com/docs/webstore/cws-dashboard-listing) covers product details, images, and optional links.
@@ -62,6 +62,6 @@ Capture the release interface without an API key, account details, or invented r
 2. Minimized pill showing the leading author’s name and count beside the article.
 3. Settings, with the API-key field empty, if an additional screenshot is useful.
 
-**Capture pending:** run `npm run store:screenshots` in a normal terminal. It captures the actual panel code using clearly labeled fictional example names and counts, producing `store/screenshots/01-panel.png` and `02-compact.png` at 1280 × 800. Inspect the images and retain their example-data labels. See [demo instructions](demo/README.md). Live publisher captures can be used instead.
+**Example article:** [Physically based assessment of hurricane surge threat under climate change](https://www.nature.com/articles/nclimate1389), DOI `10.1038/nclimate1389`. Take screenshots manually with authorC installed in Chrome. Save the expanded panel as `store/screenshots/01-nclimate1389-panel.png` and the compact view as `02-nclimate1389-compact.png`, both 1280 × 800. See [screenshot notes](screenshots/README.md).
 
-Chrome requires at least one screenshot. No screenshot PNG has been generated in this restricted environment. The supplied small crop of an older compact panel does not meet the required dimensions or show the current name label. [Chrome screenshot requirements](https://developer.chrome.com/docs/webstore/images#screenshots).
+Chrome requires at least one screenshot. Inspect the manually saved images before uploading them. [Chrome screenshot requirements](https://developer.chrome.com/docs/webstore/images#screenshots).

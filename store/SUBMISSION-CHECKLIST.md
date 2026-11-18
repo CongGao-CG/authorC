@@ -9,6 +9,7 @@
 | Automated checks | **Done:** 64 tests pass; syntax checks pass. Rebuild with `npm run package` after any source change. |
 | Store icon | **Done:** [128 × 128 PNG](assets/store-icon-128.png). |
 | Optional promotional images | **Done:** [440 × 280 tile](assets/promo-small-440x280.png) and [1400 × 560 marquee](assets/promo-marquee-1400x560.png). |
+| Manual screenshots | **Done:** [expanded panel](screenshots/01-nclimate1389-panel.png) and [compact view](screenshots/02-nclimate1389-compact.png), both 1280 × 800; dimensions, square edges, and visible UI checked. |
 | Listing / privacy declarations | **Done:** [LISTING.md](LISTING.md), [PRIVACY-DISCLOSURES.md](PRIVACY-DISCLOSURES.md). Final dashboard choices and certifications remain yours. |
 | Reviewer instructions | **Done:** [REVIEWER-NOTES.md](REVIEWER-NOTES.md). Live release testing remains pending. |
 | Privacy policy / project page | **Done locally:** [privacy policy](../privacy.html), [project page](../docs/index.html). `npm run package` also copies the policy into `docs/` for hosting. |
@@ -17,8 +18,7 @@ The store requires a 128 × 128 icon and at least one screenshot. Promotional im
 
 ## Still needed before submission
 
-- [ ] **Screenshot PNGs:** run `npm run store:screenshots` in a normal terminal. Inspect `store/screenshots/01-panel.png` and `02-compact.png` (1280 × 800). The actual UI is rendered with clearly labeled fictional examples; preserve those labels. No PNG screenshot was generated in the restricted environment. [Demo instructions](demo/README.md).
-- [ ] **Public privacy URL:** run `npm run publish:github` in a normal terminal to create the authorized **public `authorC` repository, branch `main`**, and enable GitHub Pages. Repository creation and hosting could not be completed here. Verify the resulting privacy URL without signing in, then paste it into the dashboard.
+- [ ] **Public privacy URL:** the public [GitHub repository](https://github.com/CongGao-CG/authorC), branch `main`, has been created and Pages configured. Verify the [privacy page](https://conggao-cg.github.io/authorC/privacy.html) without signing in, then paste its URL into the dashboard.
 - [ ] **Live release check:** load the extracted ZIP in Chrome. Confirm first-use enable/pause, the work/DOI match, career totals, complete available ranking, compact author-name pill, links, refresh, and settings. See the reviewer notes.
 - [ ] **Final local checks:** run `npm test`, `npm run check`, and `npm run package` after any further source edits.
 
