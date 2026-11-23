@@ -70,6 +70,8 @@ async function setup(t, options = {}) {
     storage: { local, onChanged: { addListener(fn) { storageListener = fn; } } },
     runtime: {
       id: 'authorc-test',
+      getManifest() { return { permissions: ['storage'] }; },
+      async sendMessage() {},
       getURL(path) { return `chrome-extension://authorc-test/${path}`; },
       async openOptionsPage() { optionsOpened += 1; return options.openOptions?.(); },
       onMessage: { addListener(fn) { listener = fn; } },
@@ -117,6 +119,23 @@ test('background restricts credential storage and rejects foreign or embedded re
   assert.equal((await app.lookup({ article: { doi: 'https://arbitrary.example/private' } })).error.code, 'INVALID_ARTICLE');
   assert.equal((await app.lookup({ article: {} })).error.code, 'NO_IDENTIFIER');
   assert.equal(app.fetches.length, 0);
+});
+
+test('only the settings page can read credentials or change consent', async t => {
+  const app = await setup(t, { initial: { automaticLookupEnabled: false, apiKey: 'test-key' } });
+  const read = { type: 'AUTHORC_GET_SETTINGS' };
+  const enable = { type: 'AUTHORC_SET_SETTING', key: 'automaticLookupEnabled', value: true };
+  for (const sender of [PAGE, { ...OPTIONS, id: 'foreign' }, { ...OPTIONS, url: OPTIONS.url + '.other' }]) {
+    assert.equal(await app.message(read, sender), undefined);
+    assert.equal(await app.message(enable, sender), undefined);
+  }
+  assert.deepEqual(await app.message(read, OPTIONS), {
+    ok: true, settings: { automaticLookupEnabled: false, apiKey: 'test-key' },
+  });
+  assert.deepEqual(await app.message({ ...enable, value: 'true' }, OPTIONS), { ok: false });
+  assert.deepEqual(await app.message({ ...enable, key: 'other' }, OPTIONS), { ok: false });
+  assert.deepEqual(await app.message(enable, OPTIONS), { ok: true });
+  assert.equal(app.stored.automaticLookupEnabled, true);
 });
 
 test('complete results cache for 24 hours and force refresh bypasses cache', async t => {
@@ -322,7 +341,7 @@ test('opening options handles Chrome failures without leaving a pending message'
   });
   const result = await app.message({ type: 'AUTHORC_OPEN_OPTIONS' });
   assert.equal(result.ok, false);
-  assert.match(result.error.message, /Chrome extensions page/);
+  assert.match(result.error.message, /browser’s extensions settings/);
   await assert.doesNotReject(app.toolbar({ id: 1 }));
 });
 

@@ -24,10 +24,15 @@
     lookupState.textContent = enabled ? "On — article panels appear automatically." : "Off — no automatic article lookups.";
   }
 
+  async function setSetting(key, value) {
+    const response = await chrome.runtime.sendMessage({ type: "AUTHORC_SET_SETTING", key, value });
+    if (!response?.ok) throw new Error("Could not save settings");
+  }
+
   async function changeLookupState(enabled) {
     setBusy(true);
     try {
-      await chrome.storage.local.set({ automaticLookupEnabled: enabled });
+      await setSetting("automaticLookupEnabled", enabled);
       showLookupState(enabled);
       showStatus(enabled ? "Automatic lookups enabled. Open an article page to see authorC." : "Automatic lookups paused.");
     } catch {
@@ -50,7 +55,7 @@
     setBusy(true);
     try {
       const apiKey = keyInput.value.trim();
-      await chrome.storage.local.set({ apiKey });
+      await setSetting("apiKey", apiKey);
       keyInput.value = apiKey;
       showStatus(apiKey ? "Settings saved. Your key will be used for the next lookup." : "Settings saved. authorC will make lookups without an API key.");
     } catch {
@@ -75,7 +80,9 @@
 
   async function loadSettings() {
     try {
-      const { apiKey, automaticLookupEnabled } = await chrome.storage.local.get(["apiKey", "automaticLookupEnabled"]);
+      const response = await chrome.runtime.sendMessage({ type: "AUTHORC_GET_SETTINGS" });
+      if (!response?.ok) throw new Error("Could not load settings");
+      const { apiKey, automaticLookupEnabled } = response.settings;
       keyInput.value = typeof apiKey === "string" ? apiKey : "";
       showLookupState(automaticLookupEnabled === true);
       setBusy(false);
@@ -85,8 +92,12 @@
     }
   }
 
-  chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === "local" && Object.hasOwn(changes, "automaticLookupEnabled")) showLookupState(changes.automaticLookupEnabled.newValue === true);
+  chrome.runtime.onMessage.addListener(message => {
+    if (message?.type === "AUTHORC_STATUS_CHANGED") {
+      chrome.runtime.sendMessage({ type: "AUTHORC_GET_STATUS" }).then(response => {
+        if (response?.ok) showLookupState(response.enabled);
+      }).catch(() => {});
+    }
   });
 
   loadSettings();

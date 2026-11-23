@@ -1,4 +1,5 @@
 import { lookupArticle, OpenAlexError } from './openalex.js';
+import { createPrivateStorage } from './private-storage.js';
 
 const CACHE_PREFIX = 'article:';
 const CACHE_TTL = 24 * 60 * 60 * 1000;
@@ -14,19 +15,26 @@ class UserFacingError extends Error {
   }
 }
 
-// Publisher content scripts must never have access to the saved API key.
-const storageReady = chrome.storage.local.setAccessLevel({ accessLevel: 'TRUSTED_CONTEXTS' });
+// Chrome installations retain their protected settings and cache across upgrades.
+const usesExtensionStorage = chrome.runtime.getManifest().permissions?.includes('storage');
+const storage = usesExtensionStorage ? chrome.storage.local : createPrivateStorage();
+const storageReady = usesExtensionStorage
+  ? storage.setAccessLevel({ accessLevel: 'TRUSTED_CONTEXTS' })
+  : Promise.resolve();
 
 async function automaticLookupEnabled() {
   await storageReady;
-  const settings = await chrome.storage.local.get('automaticLookupEnabled');
+  const settings = await storage.get('automaticLookupEnabled');
   return settings.automaticLookupEnabled === true;
 }
 
 async function notifyStatusChanged() {
   const tabs = await chrome.tabs.query({});
-  await Promise.allSettled(tabs.filter(tab => tab.id).map(tab =>
-    chrome.tabs.sendMessage(tab.id, { type: 'AUTHORC_STATUS_CHANGED' })));
+  const message = { type: 'AUTHORC_STATUS_CHANGED' };
+  await Promise.allSettled([
+    chrome.runtime.sendMessage(message),
+    ...tabs.filter(tab => tab.id).map(tab => chrome.tabs.sendMessage(tab.id, message)),
+  ]);
 }
 
 function validateArticle(input, sender) {
@@ -63,7 +71,7 @@ async function cacheKey(article) {
 }
 
 async function trimCache() {
-  const saved = await chrome.storage.local.get(null);
+  const saved = await storage.get(null);
   const entries = Object.entries(saved).filter(([key]) => key.startsWith(CACHE_PREFIX));
   entries.sort((a, b) => (b[1]?.savedAt || 0) - (a[1]?.savedAt || 0));
   let bytes = 0;
@@ -72,7 +80,7 @@ async function trimCache() {
     bytes += JSON.stringify(entry).length * 2;
     if (index >= 60 || bytes > 3_500_000 || !isFreshCache(entry)) remove.push(key);
   }
-  if (remove.length) await chrome.storage.local.remove(remove);
+  if (remove.length) await storage.remove(remove);
 }
 
 function isFreshCache(entry) {
@@ -88,15 +96,19 @@ function mutateCache(operation) {
   return task;
 }
 
-async function clearCache() {
+function cancelPending() {
   generation += 1;
   for (const task of pending.values()) task.controller.abort();
   pending.clear();
+}
+
+async function clearCache() {
+  cancelPending();
   await storageReady;
   await mutateCache(async () => {
-    const saved = await chrome.storage.local.get(null);
+    const saved = await storage.get(null);
     const keys = Object.keys(saved).filter(key => key.startsWith(CACHE_PREFIX));
-    if (keys.length) await chrome.storage.local.remove(keys);
+    if (keys.length) await storage.remove(keys);
   });
 }
 
@@ -111,7 +123,7 @@ async function lookup(input, sender, force) {
   do {
     await cacheMutations;
     startedAtGeneration = generation;
-    saved = await chrome.storage.local.get([key, 'apiKey', 'automaticLookupEnabled']);
+    saved = await storage.get([key, 'apiKey', 'automaticLookupEnabled']);
   } while (startedAtGeneration !== generation);
   if (saved.automaticLookupEnabled !== true) {
     throw new UserFacingError('CONSENT_REQUIRED', 'Automatic lookups are paused. Enable them in authorC settings.');
@@ -130,7 +142,7 @@ async function lookup(input, sender, force) {
       try {
         await mutateCache(async () => {
           if (generation !== startedAtGeneration) return;
-          await chrome.storage.local.set({ [key]: { savedAt: Date.now(), data } });
+          await storage.set({ [key]: { savedAt: Date.now(), data } });
           await trimCache();
         });
       } catch {
@@ -150,14 +162,43 @@ async function lookup(input, sender, force) {
   }
 }
 
-chrome.storage.onChanged.addListener((changes, area) => {
-  if (area !== 'local') return;
-  if (Object.hasOwn(changes, 'apiKey') || Object.hasOwn(changes, 'automaticLookupEnabled')) clearCache().catch(() => {});
-  if (Object.hasOwn(changes, 'automaticLookupEnabled')) notifyStatusChanged().catch(() => {});
-});
+if (usesExtensionStorage) {
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area !== 'local') return;
+    if (Object.hasOwn(changes, 'apiKey') || Object.hasOwn(changes, 'automaticLookupEnabled')) clearCache().catch(() => {});
+    if (Object.hasOwn(changes, 'automaticLookupEnabled')) notifyStatusChanged().catch(() => {});
+  });
+}
+
+async function settingsRequest(message) {
+  await storageReady;
+  if (message.type === 'AUTHORC_GET_SETTINGS') {
+    return { ok: true, settings: await storage.get(['apiKey', 'automaticLookupEnabled']) };
+  }
+  const { key, value } = message;
+  if (!(key === 'automaticLookupEnabled' && typeof value === 'boolean') &&
+      !(key === 'apiKey' && typeof value === 'string' && value.length <= 512)) {
+    return { ok: false };
+  }
+
+  if (usesExtensionStorage) {
+    await storage.set({ [key]: value });
+  } else {
+    cancelPending();
+    // Commit the setting and invalidate the old cache together across worker restarts.
+    await mutateCache(() => storage.set({ [key]: value }, CACHE_PREFIX));
+    if (key === 'automaticLookupEnabled') await notifyStatusChanged().catch(() => {});
+  }
+  return { ok: true };
+}
 
 chrome.runtime.onMessage.addListener((message, sender, respond) => {
   if (sender.id !== chrome.runtime.id || !message) return false;
+  if (message.type === 'AUTHORC_GET_SETTINGS' || message.type === 'AUTHORC_SET_SETTING') {
+    if (sender.url !== chrome.runtime.getURL('options.html')) return false;
+    settingsRequest(message).then(respond, () => respond({ ok: false }));
+    return true;
+  }
   if (message.type === 'AUTHORC_GET_STATUS') {
     automaticLookupEnabled().then(
       enabled => respond({ ok: true, enabled }),
@@ -168,7 +209,7 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
   if (message.type === 'AUTHORC_OPEN_OPTIONS') {
     chrome.runtime.openOptionsPage().then(
       () => respond({ ok: true }),
-      () => respond({ ok: false, error: { message: 'Could not open settings. Open Options from the Chrome extensions page.' } }),
+      () => respond({ ok: false, error: { message: 'Could not open settings. Open authorC from your browser’s extensions settings.' } }),
     );
     return true;
   }

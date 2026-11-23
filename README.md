@@ -6,6 +6,20 @@ authorC finds the matching OpenAlex work, displays each available author’s cit
 
 ## Install
 
+### Safari on macOS
+
+1. Locate `authorC-safari-0.2.0.zip` on your Mac. If you need to build it, [download the source](https://github.com/CongGao-CG/authorC/archive/refs/heads/main.zip), extract it, and open Terminal in the extracted folder. With Node.js 20 or later installed, run `npm run package:safari`. The ZIP will be in `dist/safari/`. Leave it zipped.
+2. Open **Safari → Settings → Advanced** and enable **Show features for web developers**.
+3. In **Settings → Developer**, click **Add Temporary Extension…**, authenticate if prompted, and select the Safari ZIP.
+4. In **Settings → Extensions**, enable **authorC** under **Temporary** for the profile you use.
+5. With **authorC** selected, click **Settings**, review the data-use notice, and choose **Agree and enable automatic lookups**. Open the [example article](#example-article), allow website access if Safari asks, and reload the page to see the ranking.
+
+Safari removes temporary extensions when you quit Safari or after 24 hours, whichever comes first. Keep the ZIP so you can add it again. [Apple’s installation guide](https://developer.apple.com/documentation/safariservices/running-your-safari-web-extension)
+
+### Chrome
+
+[Install from the Chrome Web Store](https://chromewebstore.google.com/detail/authorc/nnoekmeilkobagjjggmelmknlicckmjh) or load the source locally using the steps below.
+
 1. [Download authorC](https://github.com/CongGao-CG/authorC/archive/refs/heads/main.zip) and extract the ZIP.
 2. Open `chrome://extensions` in Chrome and enable **Developer mode**.
 3. Select **Load unpacked** and choose the extracted `authorC-main` folder containing `manifest.json`.
