@@ -8,7 +8,7 @@ authorC finds the matching OpenAlex work, displays each available author’s cit
 
 ### Safari on macOS
 
-1. Locate `authorC-safari-0.2.0.zip` on your Mac. If you need to build it, [download the source](https://github.com/CongGao-CG/authorC/archive/refs/heads/main.zip), extract it, and open Terminal in the extracted folder. With Node.js 20 or later installed, run `npm run package:safari`. The ZIP will be in `dist/safari/`. Leave it zipped.
+1. [Download authorC 0.2.0 for macOS Safari (ZIP)](https://github.com/CongGao-CG/authorC/releases/download/safari-v0.2.0/authorC-safari-0.2.0.zip). Leave the file zipped.
 2. Open **Safari → Settings → Advanced** and enable **Show features for web developers**.
 3. In **Settings → Developer**, click **Add Temporary Extension…**, authenticate if prompted, and select the Safari ZIP.
 4. In **Settings → Extensions**, enable **authorC** under **Temporary** for the profile you use.
